@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Config;
+package DatabaseAccess;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -21,7 +21,7 @@ public class DatabaseConnection {
 
     private String Url = "jdbc:mysql://localhost:3306/student_management";
     private String User = "root";
-    private String Password = "mysql";
+    private String Password = "";
 
     Connection con = null;
 

@@ -13,7 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import Config.DatabaseConnection;
+import DatabaseAccess.DatabaseConnection;
+import Model.User;
 
 /**
  *
@@ -39,12 +40,10 @@ public class Register extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
-        DatabaseConnection condb = new DatabaseConnection();
+        User user = new User(username, password, fullname, email);
+        
 
-        String sql = "INSERT INTO users(fullname, email, username, `password`) ";
-        sql += "VALUES('" + fullname + "','" + email + "', '" + username + "', '" + password + "')";
-
-        if (condb.SaveData(sql)) {
+        if (user.Create()) {
             response.sendRedirect("register-success.jsp");
         } else {
             response.sendRedirect("register.jsp");
