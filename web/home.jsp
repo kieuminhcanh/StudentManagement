@@ -15,5 +15,8 @@
         <h1>Student Management Systems</h1>
         <a href="login">Login</a> | 
         <a href="register.jsp">Register</a>
+        <hr>
+        <a href="posts/create">Create post</a> | 
+        <a href="posts/index">List post</a> | 
     </body>
 </html>
