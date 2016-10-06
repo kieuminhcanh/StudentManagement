@@ -80,9 +80,15 @@ public class Post {
         return false;
     }
 
-    public static ArrayList<Post> GetAll() {
+    public static ArrayList<Post> GetAll(String keyword) {
         try {
-            String sql = "SELECT * FROM posts, users WHERE users.id = posts.user_id";
+            String sql = "";
+            if (keyword == null) {
+                sql = "SELECT * FROM posts, users WHERE users.id = posts.user_id";
+            } else {
+                sql = "SELECT * FROM posts, users WHERE users.id = posts.user_id AND title LIKE '%" + keyword + "%'";
+
+            }
             PreparedStatement statement = DBConnection.createPrepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             ArrayList<Post> posts = new ArrayList<Post>();
@@ -104,4 +110,51 @@ public class Post {
         return null;
     }
 
+    public static Post GetById(int id) throws Exception {
+        try {
+            String sql = "SELECT * FROM posts WHERE id = ?";
+            PreparedStatement statement = DBConnection.createPrepareStatement(sql);
+            statement.setInt(1, id);
+            ResultSet rs = statement.executeQuery();
+            if (rs.first()) {
+                Post post = new Post();
+                post.setId(rs.getInt("id"));
+                post.setTitle(rs.getString("title"));
+                post.setContent(rs.getString("content"));
+                post.setUser_id(rs.getInt("user_id"));
+                return post;
+            }
+        } catch (Exception ex) {
+            throw new Exception(ex.getMessage());
+        }
+        return null;
+    }
+
+    public boolean Save() {
+        try {
+            String sql = "UPDATE posts SET title = ?, content = ? WHERE id = ?";
+            PreparedStatement statement = DBConnection.createPrepareStatement(sql);
+            statement.setString(1, this.title);
+            statement.setString(2, this.content);
+            statement.setInt(3, this.id);
+            statement.executeUpdate();
+            return true;
+        } catch (Exception ex) {
+            Logger.getLogger(Post.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    public static boolean Delete(int id) {
+        try {
+            String sql = "DELETE FROM posts WHERE id = ?";
+            PreparedStatement statement = DBConnection.createPrepareStatement(sql);
+            statement.setInt(1, id);
+            statement.execute();
+            return true;
+        } catch (Exception ex) {
+            Logger.getLogger(Post.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
 }

@@ -33,7 +33,9 @@ public class PostsIndex extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        ArrayList<Post> posts = Post.GetAll();
+       String keyword = request.getParameter("keyword");
+        
+        ArrayList<Post> posts = Post.GetAll(keyword);
         
         request.setAttribute("posts", posts);
         request.getRequestDispatcher("/posts/index.jsp").forward(request, response);

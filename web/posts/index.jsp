@@ -13,14 +13,21 @@
         <title>JSP Page</title>
     </head>
     <body>
+
+        <form action="index" method="GET">
+            TIM KIEM: <input type="text" value='<%= request.getParameter("keyword") %>' name="keyword"/> 
+            <button type="submit" >Tim kiem</button>
+        </form>
+
         <h1>DANH SACH BAI VIET</h1>
 
         <table border="1">
             <thead>
                 <tr>
-                    <th>#</th>
+                    <th>STT</th>
                     <th>Tieu de</th>
                     <th>Tac gia</th>
+                    <th>#</th>
                 </tr>
             </thead>
             <tbody>
@@ -29,6 +36,10 @@
                         <td>${post.id}</td>
                         <td>${post.title}</td>                        
                         <td>${post.fullname}</td>
+                        <td>
+                            <a href="edit?id=${post.id}">Sua</a> | 
+                            <a href="delete?id=${post.id}">Xoa</a>
+                        </td>
                     </tr>
                 </c:forEach>
             </tbody>

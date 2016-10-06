@@ -6,11 +6,8 @@
 package PostsController;
 
 import Model.Post;
-import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -18,14 +15,39 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  *
  * @author Administrator
  */
-@WebServlet(name = "PostsCreate", urlPatterns = {"/posts/create"})
-public class PostsCreate extends HttpServlet {
+@WebServlet(name = "PostsEdit", urlPatterns = {"/posts/edit"})
+public class PostsEdit extends HttpServlet {
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet PostsEdit</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet PostsEdit at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -39,11 +61,20 @@ public class PostsCreate extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        if (session.getAttribute("user_id") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-        } else {
-            request.getRequestDispatcher("/posts/create.jsp").forward(request, response);
+        String id = request.getParameter("id");
+
+        try {
+            Post post = Post.GetById(Integer.parseInt(id));
+
+            if (post == null) {
+                response.getWriter().println("Bai viet khong co");
+            } else {
+                request.setAttribute("post", post);
+                request.getRequestDispatcher("/posts/edit.jsp").forward(request, response);
+            }
+
+        } catch (Exception ex) {
+            Logger.getLogger(PostsEdit.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -58,21 +89,17 @@ public class PostsCreate extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String id = request.getParameter("id");
         String title = request.getParameter("title");
-        String content = request.getParameter("content");
-        HttpSession session = request.getSession();
-        int user_id = (int) session.getAttribute("user_id");
+        String content = request.getParameter("content");        
+        
         Post post = new Post();
+        post.setId(Integer.parseInt(id));
         post.setTitle(title);
         post.setContent(content);
-        post.setUser_id(user_id);
-        if (post.Create()) {
-            PrintWriter out = response.getWriter();
-            response.sendRedirect("index");
-        } else {
-            PrintWriter out = response.getWriter();
-            out.println("Khong the luu bai viet");
-        }
+        post.Save();
+        
+        response.sendRedirect("index");
     }
 
     /**
