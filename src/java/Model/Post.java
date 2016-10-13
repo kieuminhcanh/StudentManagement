@@ -18,60 +18,79 @@ import java.util.logging.Logger;
  * @author Administrator
  */
 public class Post {
-
+    
     private int id;
     private String title;
     private String content;
     private int user_id;
     private String fullname;
-
+    private int category_id;
+    private String category_name;
+    
+    public void setCategory_name(String category_name) {
+        this.category_name = category_name;
+    }
+    
+    public String getCategory_name() {
+        return category_name;
+    }
+    
+    public int getCategory_id() {
+        return category_id;
+    }
+    
+    public void setCategory_id(int category_id) {
+        this.category_id = category_id;
+    }
+    
     public void setFullname(String fullname) {
         this.fullname = fullname;
     }
-
+    
     public String getFullname() {
         return fullname;
     }
-
+    
     public int getId() {
         return id;
     }
-
+    
     public String getTitle() {
         return title;
     }
-
+    
     public String getContent() {
         return content;
     }
-
+    
     public int getUser_id() {
         return user_id;
     }
-
+    
     public void setId(int id) {
         this.id = id;
     }
-
+    
     public void setTitle(String title) {
         this.title = title;
     }
-
+    
     public void setContent(String content) {
         this.content = content;
     }
-
+    
     public void setUser_id(int user_id) {
         this.user_id = user_id;
     }
-
+    
     public boolean Create() {
         try {
-            String sql = "INSERT INTO posts (title, content, user_id) VALUES( ?, ? ,?)";
+            String sql = "INSERT INTO posts (title, content, user_id, category_id) VALUES( ?, ? ,?,?)";
             PreparedStatement statement = DBConnection.createPrepareStatement(sql);
             statement.setString(1, this.title);
             statement.setString(2, this.content);
             statement.setInt(3, this.user_id);
+            statement.setInt(4, this.category_id);
             statement.execute();
             return true;
         } catch (SQLException ex) {
@@ -79,15 +98,15 @@ public class Post {
         }
         return false;
     }
-
+    
     public static ArrayList<Post> GetAll(String keyword) {
         try {
             String sql = "";
             if (keyword == null) {
-                sql = "SELECT * FROM posts, users WHERE users.id = posts.user_id";
+                sql = "SELECT * FROM posts, users, categories WHERE users.id = posts.user_id AND posts.category_id = categories.id";
             } else {
                 sql = "SELECT * FROM posts, users WHERE users.id = posts.user_id AND title LIKE '%" + keyword + "%'";
-
+                
             }
             PreparedStatement statement = DBConnection.createPrepareStatement(sql);
             ResultSet rs = statement.executeQuery();
@@ -99,17 +118,18 @@ public class Post {
                 post.setContent(rs.getString("content"));
                 post.setUser_id(rs.getInt("user_id"));
                 post.setFullname(rs.getString("fullname"));
-
+                post.setCategory_id(rs.getInt("category_id"));
+                post.setCategory_name(rs.getString("categories.name"));
                 posts.add(post);
             }
-
+            
             return posts;
         } catch (SQLException ex) {
             Logger.getLogger(Post.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-
+    
     public static Post GetById(int id) throws Exception {
         try {
             String sql = "SELECT * FROM posts WHERE id = ?";
@@ -129,7 +149,7 @@ public class Post {
         }
         return null;
     }
-
+    
     public boolean Save() {
         try {
             String sql = "UPDATE posts SET title = ?, content = ? WHERE id = ?";
@@ -144,7 +164,7 @@ public class Post {
         }
         return false;
     }
-
+    
     public static boolean Delete(int id) {
         try {
             String sql = "DELETE FROM posts WHERE id = ?";

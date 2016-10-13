@@ -20,6 +20,7 @@
         </form>
 
         <h1>DANH SACH BAI VIET</h1>
+        <a href="create">Them moi</a>
 
         <table border="1">
             <thead>
@@ -27,6 +28,7 @@
                     <th>STT</th>
                     <th>Tieu de</th>
                     <th>Tac gia</th>
+                    <th>The loai</th>
                     <th>#</th>
                 </tr>
             </thead>
@@ -36,6 +38,7 @@
                         <td>${post.id}</td>
                         <td>${post.title}</td>                        
                         <td>${post.fullname}</td>
+                        <td>${post.category_name}</td>
                         <td>
                             <a href="edit?id=${post.id}">Sua</a> | 
                             <a href="delete?id=${post.id}">Xoa</a>

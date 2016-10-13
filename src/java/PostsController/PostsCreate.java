@@ -5,12 +5,14 @@
  */
 package PostsController;
 
+import Model.Category;
 import Model.Post;
 import Model.User;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -43,6 +45,8 @@ public class PostsCreate extends HttpServlet {
         if (session.getAttribute("user_id") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
         } else {
+            ArrayList<Category> categories = Category.GetAll();
+            request.setAttribute("categories", categories);
             request.getRequestDispatcher("/posts/create.jsp").forward(request, response);
         }
     }
@@ -62,10 +66,15 @@ public class PostsCreate extends HttpServlet {
         String content = request.getParameter("content");
         HttpSession session = request.getSession();
         int user_id = (int) session.getAttribute("user_id");
+        String category_id = request.getParameter("category_id");
+        
         Post post = new Post();
         post.setTitle(title);
         post.setContent(content);
         post.setUser_id(user_id);
+        post.setCategory_id(Integer.parseInt(category_id));
+        
+        
         if (post.Create()) {
             PrintWriter out = response.getWriter();
             response.sendRedirect("index");
